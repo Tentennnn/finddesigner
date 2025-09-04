@@ -1,0 +1,168 @@
+
+export const translations = {
+  en: {
+    // Header
+    appName: "Artisan Bridge",
+    findWork: "Find Work",
+    findDesigners: "Find Designers",
+    postJob: "Post a Job",
+    dashboard: "Dashboard",
+    profile: "Profile",
+    login: "Log In",
+    logout: "Log Out",
+    signup: "Sign Up",
+    english: "English",
+    khmer: "Khmer",
+
+    // Home Page
+    heroTitle: "Find & Hire Expert Graphic Designers",
+    heroSubtitle: "Your one-stop platform for top-tier design talent. Post a job and get proposals from verified professionals.",
+    getStarted: "Get Started",
+    browseDesigners: "Browse Designers",
+
+    // Auth
+    loginToYourAccount: "Log in to your account",
+    dontHaveAccount: "Don't have an account?",
+    createAnAccount: "Create an account",
+    alreadyHaveAccount: "Already have an account?",
+    emailAddress: "Email Address",
+    password: "Password",
+    fullName: "Full Name",
+    iAmA: "I am a...",
+    client: "Client (I want to hire)",
+    designer: "Designer (I want to work)",
+    invalidCredentials: "Invalid login credentials. Please check your email and password.",
+    emailNotConfirmed: "Please confirm your email address to log in. Check your inbox for the confirmation link.",
+    loginError: "An error occurred during login. Please try again.",
+    forgotPassword: "Forgot Password?",
+    resetPassword: "Reset Password",
+    sendResetLink: "Send Reset Link",
+    checkEmailForReset: "If an account exists for this email, a password reset link has been sent.",
+    updatePassword: "Update Password",
+    newPassword: "New Password",
+    passwordUpdatedSuccess: "Password updated successfully!",
+    passwordUpdatedInfo: "Your password has been updated. Please log in with your new password.",
+    failedToSendReset: "Failed to send password reset link. Please try again.",
+    failedToUpdatePass: "Failed to update password. The link may have expired or is invalid.",
+
+    // General
+    loading: "Loading...",
+    error: "An error occurred.",
+    submit: "Submit",
+    cancel: "Cancel",
+    save: "Save",
+    edit: "Edit",
+    view: "View",
+
+    // Jobs
+    jobTitle: "Job Title",
+    jobDescription: "Job Description",
+    budget: "Budget ($)",
+    deadline: "Deadline",
+    requiredSkills: "Required Skills (comma-separated)",
+    postedBy: "Posted by",
+    proposals: "Proposals",
+    submitProposal: "Submit a Proposal",
+    coverLetter: "Cover Letter",
+    proposedPrice: "Proposed Price ($)",
+    proposedTimeline: "Proposed Timeline (e.g., 2 weeks)",
+
+    // Dashboard
+    myJobPostings: "My Job Postings",
+    myProposals: "My Proposals",
+    noJobsPosted: "You have not posted any jobs yet.",
+    noProposalsSubmitted: "You have not submitted any proposals yet.",
+
+    // Profile
+    designerProfile: "Designer Profile",
+    skills: "Skills",
+    portfolio: "Portfolio",
+    contact: "Contact",
+    editProfile: "Edit Profile",
+    bio: "Bio / About Me"
+  },
+  km: {
+    // Header
+    appName: "ស្ពានសិប្បករ",
+    findWork: "ស្វែងរកការងារ",
+    findDesigners: "ស្វែងរកអ្នករចនា",
+    postJob: "ប្រកាសការងារ",
+    dashboard: "ផ្ទាំងគ្រប់គ្រង",
+    profile: "ប្រវត្តិរូប",
+    login: "ចូលគណនី",
+    logout: "ចាកចេញ",
+    signup: "ចុះឈ្មោះ",
+    english: "អង់គ្លេស",
+    khmer: "ខ្មែរ",
+
+    // Home Page
+    heroTitle: "ស្វែងរក និងជួលអ្នករចនាក្រាហ្វិកជំនាញ",
+    heroSubtitle: "វេទិការបស់អ្នកសម្រាប់ទេពកោសល្យរចនាកំពូល។ ប្រកាសការងារនិងទទួលបានសំណើពីអ្នកជំនាញដែលបានផ្ទៀងផ្ទាត់។",
+    getStarted: "ចាប់ផ្តើម",
+    browseDesigners: "រកមើលអ្នករចនា",
+
+    // Auth
+    loginToYourAccount: "ចូលទៅកាន់គណនីរបស់អ្នក",
+    dontHaveAccount: "មិនទាន់មានគណនី?",
+    createAnAccount: "បង្កើត​គណនី",
+    alreadyHaveAccount: "មានគណនីហើយ?",
+    emailAddress: "អាសយដ្ឋានអ៊ីមែល",
+    password: "ពាក្យសម្ងាត់",
+    fullName: "ឈ្មោះ​ពេញ",
+    iAmA: "ខ្ញុំ​ជា...",
+    client: "អតិថិជន (ខ្ញុំចង់ជួល)",
+    designer: "អ្នករចនា (ខ្ញុំចង់ធ្វើការ)",
+    invalidCredentials: "ព័ត៌មានសម្គាល់មិនត្រឹមត្រូវទេ។ សូមពិនិត្យអ៊ីមែល និងពាក្យសម្ងាត់របស់អ្នក។",
+    emailNotConfirmed: "សូមបញ្ជាក់អាសយដ្ឋានអ៊ីមែលរបស់អ្នកដើម្បីចូល។ សូមពិនិត្យមើលប្រអប់សំបុត្ររបស់អ្នកសម្រាប់តំណបញ្ជាក់។",
+    loginError: "មានបញ្ហាកើតឡើងកំឡុងពេលចូល។ សូម​ព្យាយាម​ម្ដងទៀត។",
+    forgotPassword: "ភ្លេចពាក្យសម្ងាត់?",
+    resetPassword: "កំណត់ពាក្យសម្ងាត់ឡើងវិញ",
+    sendResetLink: "ផ្ញើតំណកំណត់ឡើងវិញ",
+    checkEmailForReset: "ប្រសិនបើមានគណនីសម្រាប់អ៊ីមែលនេះ តំណកំណត់ពាក្យសម្ងាត់ឡើងវិញត្រូវបានផ្ញើ។",
+    updatePassword: "ធ្វើបច្ចុប្បន្នភាពពាក្យសម្ងាត់",
+    newPassword: "ពាក្យសម្ងាត់​ថ្មី",
+    passwordUpdatedSuccess: "ការធ្វើបច្ចុប្បន្នភាពពាក្យសម្ងាត់បានជោគជ័យ!",
+    passwordUpdatedInfo: "ពាក្យសម្ងាត់របស់អ្នកត្រូវបានធ្វើបច្ចុប្បន្នភាព។ សូមចូលដោយប្រើពាក្យសម្ងាត់ថ្មីរបស់អ្នក។",
+    failedToSendReset: "បរាជ័យក្នុងការផ្ញើតំណកំណត់ពាក្យសម្ងាត់ឡើងវិញ។ សូម​ព្យាយាម​ម្ដងទៀត។",
+    failedToUpdatePass: "បរាជ័យក្នុងការធ្វើបច្ចុប្បន្នភាពពាក្យសម្ងាត់។ តំណអាចនឹងផុតកំណត់ ឬមិនត្រឹមត្រូវ។",
+
+    // General
+    loading: "កំពុងដំណើរការ...",
+    error: "មានបញ្ហាកើតឡើង។",
+    submit: "ដាក់ស្នើ",
+    cancel: "បោះបង់",
+    save: "រក្សាទុក",
+    edit: "កែសម្រួល",
+    view: "មើល",
+    
+    // Jobs
+    jobTitle: "ចំណងជើងការងារ",
+    jobDescription: "ការពិពណ៌នាអំពីការងារ",
+    budget: "ថវិកា ($)",
+    deadline: "កាលបរិច្ឆេទ​កំណត់",
+    requiredSkills: "ជំនាញដែលត្រូវការ (បំបែកដោយក្បៀស)",
+    postedBy: "បានប្រកាសដោយ",
+    proposals: "សំណើ",
+    submitProposal: "ដាក់សំណើ",
+    coverLetter: "លិខិតអម",
+    proposedPrice: "តម្លៃដែលបានស្នើ ($)",
+    proposedTimeline: "ពេលវេលាដែលបានស្នើ (ឧ. ២ សប្តាហ៍)",
+    
+    // Dashboard
+    myJobPostings: "ការប្រកាសការងាររបស់ខ្ញុំ",
+    myProposals: "សំណើរបស់ខ្ញុំ",
+    noJobsPosted: "អ្នកមិនទាន់បានប្រកាសការងារណាមួយនៅឡើយទេ។",
+    noProposalsSubmitted: "អ្នកមិនទាន់បានដាក់សំណើណាមួយនៅឡើយទេ។",
+    
+    // Profile
+    designerProfile: "ប្រវត្តិរូបអ្នករចនា",
+    skills: "ជំនាញ",
+    portfolio: "ស្នាដៃ",
+    contact: "ទំនាក់ទំនង",
+    editProfile: "កែសម្រួលប្រវត្តិរូប",
+    bio: "អំពីខ្ញុំ"
+  }
+};
+
+export type Language = 'en' | 'km';
+export type TranslationKey = keyof typeof translations.en;
