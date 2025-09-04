@@ -6,58 +6,53 @@ import Spinner from '../components/Spinner';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../hooks/useLanguage';
 import toast from 'react-hot-toast';
+import { useSupabaseSingleQuery, useSupabaseQuery } from '../hooks/useSupabaseQuery';
+import DatabaseSetup from '../components/DatabaseSetup';
 
 const ProfilePage: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
-  const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const { t } = useLanguage();
 
-  const fetchProfileData = useCallback(async () => {
-    if (!userId) return;
-    setLoading(true);
-    try {
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      
-      if (profileError) throw profileError;
-      setProfile(profileData);
-
-      if (profileData.role === UserRole.Designer) {
-        const { data: portfolioData, error: portfolioError } = await supabase
-          .from('portfolio_items')
-          .select('*')
-          .eq('designer_id', userId);
-        
-        if (portfolioError) throw portfolioError;
-        setPortfolio(portfolioData || []);
-      }
-    } catch (error: any) {
-      console.error('Error fetching profile data:', error);
-      const message = typeof error?.message === 'string' ? error.message : 'An unknown error occurred';
-      toast.error(`Error fetching profile data: ${message}`);
-    } finally {
-      setLoading(false);
-    }
+  const profileQuery = useCallback(() => {
+    if (!userId) throw new Error("User ID is required");
+    return supabase.from('profiles').select('*').eq('id', userId);
   }, [userId]);
 
-  useEffect(() => {
-    fetchProfileData();
-  }, [fetchProfileData]);
+  const { data: profile, loading: profileLoading, error: profileError, isSchemaError: isProfileSchemaError } = useSupabaseSingleQuery<Profile>(profileQuery);
+  
+  const portfolioQuery = useCallback(() => {
+    if (!userId || profile?.role !== UserRole.Designer) {
+        return supabase.from('portfolio_items').select('*').limit(0);
+    }
+    return supabase.from('portfolio_items').select('*').eq('designer_id', userId);
+  }, [userId, profile]);
 
-  if (loading) return <Spinner />;
-  if (!profile) return <p>{t('error')}</p>;
+  const { data: portfolio, loading: portfolioLoading, error: portfolioError, isSchemaError: isPortfolioSchemaError } = useSupabaseQuery<PortfolioItem>(portfolioQuery);
+
+  const isSchemaError = isProfileSchemaError || isPortfolioSchemaError;
+  const loading = profileLoading || portfolioLoading;
+  const error = profileError || portfolioError;
+  
+  useEffect(() => {
+      if(error && !isSchemaError) {
+          toast.error(`Error fetching profile data: ${error.message}`);
+      }
+  }, [error, isSchemaError]);
+  
+  if (isSchemaError) {
+      return <DatabaseSetup />;
+  }
+
+  if (loading) return <div className="flex justify-center pt-20"><Spinner /></div>;
+  if (error) return <p className="text-center">{t('error')}</p>;
+  if (!profile) return <p className="text-center">{t('profileNotFound')}</p>;
 
   return (
     <div className="max-w-4xl mx-auto">
       <div className="bg-white p-8 rounded-lg shadow-md">
         <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left">
-          <img src={profile.avatar_url} alt={profile.full_name} className="w-32 h-32 rounded-full mb-4 md:mb-0 md:mr-8 object-cover border-4 border-gray-200" />
+          <img src={profile.avatar_url || `https://picsum.photos/seed/${profile.id}/128/128`} alt={profile.full_name} className="w-32 h-32 rounded-full mb-4 md:mb-0 md:mr-8 object-cover border-4 border-gray-200" />
           <div>
             <h1 className="text-3xl font-bold">{profile.full_name}</h1>
             <p className="text-gray-600 capitalize">{profile.role}</p>
@@ -82,7 +77,7 @@ const ProfilePage: React.FC = () => {
 
             <h2 className="text-2xl font-bold border-b pb-2 mb-4 mt-8">{t('portfolio')}</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {portfolio.map(item => (
+              {portfolio && portfolio.map(item => (
                 <div key={item.id} className="border rounded-lg overflow-hidden">
                   <img src={item.image_url || `https://picsum.photos/seed/${item.id}/400/300`} alt={item.title} className="w-full h-48 object-cover" />
                   <div className="p-4">
@@ -91,7 +86,7 @@ const ProfilePage: React.FC = () => {
                   </div>
                 </div>
               ))}
-              {portfolio.length === 0 && <p>No portfolio items yet.</p>}
+              {portfolio && portfolio.length === 0 && <p>No portfolio items yet.</p>}
             </div>
           </div>
         )}

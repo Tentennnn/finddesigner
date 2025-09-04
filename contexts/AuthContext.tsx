@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../services/supabase';
@@ -29,7 +28,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         .eq('id', user.id)
         .single();
       
-      if (error) {
+      // The .single() method returns an error if no record is found.
+      // We can check for this specific error code ('PGRST116') and treat it
+      // as a valid case (profile not yet created) rather than a fatal error to log.
+      if (error && error.code !== 'PGRST116') {
         console.error('Error fetching profile:', error);
         return { ...user, profile: null };
       }

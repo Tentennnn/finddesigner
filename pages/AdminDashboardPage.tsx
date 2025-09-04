@@ -5,70 +5,61 @@ import { useAuth } from '../hooks/useAuth';
 import Spinner from '../components/Spinner';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { useSupabaseQuery } from '../hooks/useSupabaseQuery';
+import DatabaseSetup from '../components/DatabaseSetup';
 
 const AdminDashboardPage: React.FC = () => {
-  const [unverifiedDesigners, setUnverifiedDesigners] = useState<Profile[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
-  const fetchUnverifiedDesigners = useCallback(async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('role', UserRole.Designer)
-        .or('is_verified.is.null,is_verified.eq.false') // Fetch where is_verified is null or false
-        .order('updated_at', { ascending: true });
+  const query = useCallback(() => supabase
+    .from('profiles')
+    .select('*')
+    .eq('role', UserRole.Designer)
+    .or('is_verified.is.null,is_verified.eq.false')
+    .order('updated_at', { ascending: true }),
+    []
+  );
 
-      if (error) throw error;
-      setUnverifiedDesigners(data || []);
-    } catch (error: any) {
-      console.error('Error fetching designers:', error);
-      const message = typeof error?.message === 'string' ? error.message : 'An unknown error occurred';
-      toast.error(`Error fetching designers: ${message}`);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
+  const { data: unverifiedDesigners, loading, error, isSchemaError, refetch } = useSupabaseQuery<Profile>(query);
+  
   useEffect(() => {
-    if (loading || !user) return; // Wait for auth loading to finish
-    
-    if (user.profile?.role !== UserRole.Admin) {
+    if (!authLoading && (!user || user.profile?.role !== UserRole.Admin)) {
       toast.error('Access denied.');
       navigate('/');
-    } else {
-      fetchUnverifiedDesigners();
     }
-  }, [user, navigate, fetchUnverifiedDesigners, loading]);
+  }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+      if (error && !isSchemaError) {
+          toast.error(`Error fetching designers: ${error.message}`);
+      }
+  }, [error, isSchemaError]);
 
   const handleApprove = async (designerId: string) => {
     try {
-      const { error } = await supabase
+      const { error: updateError } = await supabase
         .from('profiles')
         .update({ is_verified: true })
         .eq('id', designerId);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
       
       toast.success('Designer verified successfully!');
-      setUnverifiedDesigners(prev => prev.filter(d => d.id !== designerId));
-    } catch (error: any) {
-      console.error('Failed to verify designer:', error);
-      const message = typeof error?.message === 'string' ? error.message : 'An unknown error occurred';
+      refetch(); // Refetch the list of unverified designers
+    } catch (e: any) {
+      console.error('Failed to verify designer:', e);
+      const message = typeof e?.message === 'string' ? e.message : 'An unknown error occurred';
       toast.error(`Failed to verify designer: ${message}`);
     }
   };
   
-  if (!user && !loading) {
-      navigate('/login');
-      return null;
+  if (authLoading || !user || user.profile?.role !== UserRole.Admin) {
+      return <div className="flex justify-center pt-20"><Spinner/></div>;
   }
-  
-  if (user && user.profile?.role !== UserRole.Admin) {
-      return null; // Avoid rendering content while redirecting
+
+  if (isSchemaError) {
+      return <DatabaseSetup />;
   }
 
   return (
@@ -80,7 +71,7 @@ const AdminDashboardPage: React.FC = () => {
           <Spinner />
         ) : (
           <div className="space-y-4">
-            {unverifiedDesigners.length > 0 ? (
+            {unverifiedDesigners && unverifiedDesigners.length > 0 ? (
               unverifiedDesigners.map(designer => (
                 <div key={designer.id} className="border p-4 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div>

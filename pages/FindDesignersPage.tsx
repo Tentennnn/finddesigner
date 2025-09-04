@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { supabase } from '../services/supabase';
 import { Profile, UserRole } from '../types';
 import Spinner from '../components/Spinner';
 import { useLanguage } from '../hooks/useLanguage';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { useSupabaseQuery } from '../hooks/useSupabaseQuery';
+import DatabaseSetup from '../components/DatabaseSetup';
 
-
-// DesignerCard Component defined outside to prevent re-creation on re-renders
 const DesignerCard: React.FC<{ designer: Profile }> = ({ designer }) => {
     const { t } = useLanguage();
   return (
@@ -28,38 +28,29 @@ const DesignerCard: React.FC<{ designer: Profile }> = ({ designer }) => {
   );
 };
 
-
 const FindDesignersPage: React.FC = () => {
-  const [designers, setDesigners] = useState<Profile[]>([]);
-  const [loading, setLoading] = useState(true);
   const { t } = useLanguage();
 
-  const fetchDesigners = useCallback(async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('role', UserRole.Designer)
-        .eq('is_verified', true)
-        .order('full_name');
+  const query = useCallback(() => supabase
+    .from('profiles')
+    .select('*')
+    .eq('role', UserRole.Designer)
+    .eq('is_verified', true)
+    .order('full_name'),
+    []
+  );
 
-      if (error) {
-        throw error;
-      }
-      setDesigners(data || []);
-    } catch (error: any) {
-      console.error('Error fetching designers:', error);
-      const message = typeof error?.message === 'string' ? error.message : 'An unknown error occurred';
-      toast.error(`Error fetching designers: ${message}`);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const { data: designers, loading, error, isSchemaError } = useSupabaseQuery<Profile>(query);
 
   useEffect(() => {
-    fetchDesigners();
-  }, [fetchDesigners]);
+    if (error && !isSchemaError) {
+      toast.error(`Error fetching designers: ${error.message}`);
+    }
+  }, [error, isSchemaError]);
+
+  if (isSchemaError) {
+    return <DatabaseSetup />;
+  }
 
   return (
     <div>
@@ -68,7 +59,7 @@ const FindDesignersPage: React.FC = () => {
         <Spinner />
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {designers.length > 0 ? designers.map(designer => (
+          {designers && designers.length > 0 ? designers.map(designer => (
             <DesignerCard key={designer.id} designer={designer} />
           )) : <p>No verified designers found.</p>}
         </div>

@@ -79,7 +79,8 @@ export const translations = {
     portfolio: "Portfolio",
     contact: "Contact",
     editProfile: "Edit Profile",
-    bio: "Bio / About Me"
+    bio: "Bio / About Me",
+    profileNotFound: "Profile not found."
   },
   km: {
     // Header
@@ -160,7 +161,8 @@ export const translations = {
     portfolio: "ស្នាដៃ",
     contact: "ទំនាក់ទំនង",
     editProfile: "កែសម្រួលប្រវត្តិរូប",
-    bio: "អំពីខ្ញុំ"
+    bio: "អំពីខ្ញុំ",
+    profileNotFound: "រកមិនឃើញប្រវត្តិរូបទេ។"
   }
 };
 

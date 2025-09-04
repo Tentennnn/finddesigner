@@ -4,8 +4,9 @@ import { Job } from '../types';
 import Spinner from '../components/Spinner';
 import { useLanguage } from '../hooks/useLanguage';
 import toast from 'react-hot-toast';
+import { useSupabaseQuery } from '../hooks/useSupabaseQuery';
+import DatabaseSetup from '../components/DatabaseSetup';
 
-// JobCard Component defined outside to prevent re-creation on re-renders
 const JobCard: React.FC<{ job: Job }> = ({ job }) => {
   const { t } = useLanguage();
   return (
@@ -31,36 +32,28 @@ const JobCard: React.FC<{ job: Job }> = ({ job }) => {
 };
 
 const FindWorkPage: React.FC = () => {
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [loading, setLoading] = useState(true);
   const { t } = useLanguage();
 
-  const fetchJobs = useCallback(async () => {
-    setLoading(true);
-    try {
-      // For this demo, let's fetch jobs and mock client profile data
-      const { data, error } = await supabase
+  const query = useCallback(
+    () => supabase
         .from('jobs')
         .select('*')
         .eq('status', 'open')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        throw error;
-      }
-      setJobs(data || []);
-    } catch (error: any) {
-      console.error('Error fetching jobs:', error);
-      const message = typeof error?.message === 'string' ? error.message : 'An unknown error occurred';
-      toast.error(`Error fetching jobs: ${message}`);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
+        .order('created_at', { ascending: false }),
+    []
+  );
+  
+  const { data: jobs, loading, error, isSchemaError } = useSupabaseQuery<Job>(query);
+  
   useEffect(() => {
-    fetchJobs();
-  }, [fetchJobs]);
+      if (error && !isSchemaError) {
+          toast.error(`Error fetching jobs: ${error.message}`);
+      }
+  }, [error, isSchemaError]);
+
+  if (isSchemaError) {
+      return <DatabaseSetup />;
+  }
 
   return (
     <div>
@@ -69,7 +62,7 @@ const FindWorkPage: React.FC = () => {
         <Spinner />
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {jobs.length > 0 ? jobs.map(job => (
+          {jobs && jobs.length > 0 ? jobs.map(job => (
             <JobCard key={job.id} job={job} />
           )) : <p>No open jobs found.</p>}
         </div>

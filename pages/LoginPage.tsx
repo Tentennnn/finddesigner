@@ -50,12 +50,15 @@ const LoginPage: React.FC = () => {
         .eq('id', data.user.id)
         .single();
         
-      if (profileError) {
+      // Handle profile fetch error. 'PGRST116' means the profile was not found.
+      // This is expected for new users whose profile is being created by a trigger.
+      // We can ignore it and redirect to home; AuthContext will pick up the profile later.
+      if (profileError && profileError.code !== 'PGRST116') {
           toast.error('Could not fetch user profile.');
           navigate('/');
       } else {
         toast.success('Logged in successfully!');
-        const role = profileData.role;
+        const role = profileData?.role; // profileData can be null if not found
         if (role === UserRole.Client) {
           navigate('/dashboard/client');
         } else if (role === UserRole.Designer) {
@@ -63,6 +66,7 @@ const LoginPage: React.FC = () => {
         } else if (role === UserRole.Admin) {
           navigate('/dashboard/admin');
         } else {
+          // Fallback for new users (profile not ready) or unknown roles.
           navigate('/');
         }
       }
