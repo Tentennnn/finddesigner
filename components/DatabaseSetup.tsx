@@ -19,7 +19,7 @@ DROP TYPE IF EXISTS public.proposal_status;
 -- This table stores public profile data for users.
 CREATE TABLE public.profiles (
   id uuid NOT NULL PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  updated_at timestamptz,
+  updated_at timestamz,
   full_name text,
   avatar_url text,
   role text CHECK (role IN ('client', 'designer', 'admin')),
@@ -147,23 +147,79 @@ CREATE TRIGGER on_auth_user_created
 -- The app's sign-up form passes 'role' and 'full_name' in metadata.
 -- OAuth providers like Telegram pass 'full_name' and 'avatar_url'.
 -- The function gracefully handles either case.
+
+-- ---------------------------------------------------------------------------
+-- Supabase Storage Setup for Avatars
+-- ---------------------------------------------------------------------------
+-- 1. Create a new bucket named 'avatars' in your Supabase project's Storage section.
+--    Make sure to mark the bucket as "Public".
+--
+-- 2. After creating the bucket, run the following SQL policies to secure it.
+--    These policies allow anyone to view avatars, but only authenticated
+--    users can upload, update, or delete their OWN avatar.
+-- ---------------------------------------------------------------------------
+
+-- Drop existing policies to make the script re-runnable.
+DROP POLICY IF EXISTS "Avatar images are publicly accessible." ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can upload their own avatar." ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can update their own avatar." ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can delete their own avatar." ON storage.objects;
+
+-- Policy: Allow public read access to all files in the 'avatars' bucket.
+CREATE POLICY "Avatar images are publicly accessible."
+ON storage.objects FOR SELECT
+USING ( bucket_id = 'avatars' );
+
+-- Policy: Allow authenticated users to upload an avatar into a folder named with their user ID.
+CREATE POLICY "Authenticated users can upload their own avatar."
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK ( bucket_id = 'avatars' AND auth.uid() = (storage.foldername(name))[1]::uuid );
+
+-- Policy: Allow authenticated users to update their own avatar.
+CREATE POLICY "Authenticated users can update their own avatar."
+ON storage.objects FOR UPDATE
+TO authenticated
+USING ( bucket_id = 'avatars' AND auth.uid() = (storage.foldername(name))[1]::uuid );
+
+-- Policy: Allow authenticated users to delete their own avatar.
+CREATE POLICY "Authenticated users can delete their own avatar."
+ON storage.objects FOR DELETE
+TO authenticated
+USING ( bucket_id = 'avatars' AND auth.uid() = (storage.foldername(name))[1]::uuid );
 `;
 
 const DatabaseSetup: React.FC = () => {
     const handleCopy = () => {
         navigator.clipboard.writeText(sqlSchema);
-        toast.success('SQL schema copied to clipboard!');
+        toast.success('SQL script copied to clipboard!');
     };
 
   return (
     <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-6 rounded-lg shadow-md my-8 max-w-4xl mx-auto" role="alert">
-      <h2 className="text-2xl font-bold mb-4">Database Setup Required</h2>
+      <h2 className="text-2xl font-bold mb-4">Project Setup Required</h2>
       <p className="mb-4">
-        It looks like the application's database tables haven't been set up yet. This is causing errors when trying to fetch data.
+        It looks like your Supabase project is missing some configuration (either database tables or storage setup). This can cause errors when using the application.
       </p>
       <p className="mb-4">
-        To fix this, please run the following SQL script in your Supabase project's SQL Editor. This will create all the necessary tables, relationships, and security policies.
+        To fix this, please follow the instructions below.
       </p>
+
+      <h3 className="text-xl font-bold mb-2 mt-6">1. Storage Bucket Setup (for Avatars)</h3>
+       <p className="mb-4">
+        To enable user avatar uploads, you need to set up Supabase Storage. The required security policies are included in the SQL script below, but you must create the storage "bucket" first.
+      </p>
+      <ol className="list-decimal list-inside mb-4 space-y-2">
+        <li>Go to the <strong>Storage</strong> section in your Supabase dashboard.</li>
+        <li>Click <strong>New Bucket</strong>, name it <code className="bg-gray-200 text-red-800 p-1 rounded font-mono">avatars</code>, and check the <strong>Public</strong> box to make it a public bucket.</li>
+        <li>After creating the bucket, continue to the next step.</li>
+      </ol>
+
+      <h3 className="text-xl font-bold mb-2 mt-6">2. Database Schema &amp; Policies Setup</h3>
+      <p className="mb-4">
+        Run the following SQL script in your Supabase project's <strong>SQL Editor</strong>. This will create all the necessary tables, functions, and security policies (including for the 'avatars' storage bucket you just created).
+      </p>
+
       <div className="relative bg-gray-900 text-white p-4 rounded-md font-mono text-sm overflow-x-auto">
         <button 
             onClick={handleCopy}
@@ -176,7 +232,7 @@ const DatabaseSetup: React.FC = () => {
         <pre><code>{sqlSchema}</code></pre>
       </div>
       <p className="mt-4 text-sm">
-        After running the script, please refresh this page.
+        After completing these steps, please refresh this page to continue.
       </p>
     </div>
   );

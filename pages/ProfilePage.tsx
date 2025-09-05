@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import { Profile, PortfolioItem, UserRole } from '../types';
 import Spinner from '../components/Spinner';
@@ -58,7 +59,7 @@ const ProfilePage: React.FC = () => {
             <p className="text-gray-600 capitalize">{profile.role}</p>
             {profile.is_verified && <span className="text-sm font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full my-2 inline-block">Verified</span>}
             {user?.id === userId && (
-              <button className="mt-2 text-sm text-blue-600 hover:underline">{t('editProfile')}</button>
+              <Link to="/profile/edit" className="mt-2 text-sm text-blue-600 hover:underline">{t('editProfile')}</Link>
             )}
           </div>
         </div>

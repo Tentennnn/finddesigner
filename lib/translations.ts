@@ -44,6 +44,11 @@ export const translations = {
     passwordUpdatedInfo: "Your password has been updated. Please log in with your new password.",
     failedToSendReset: "Failed to send password reset link. Please try again.",
     failedToUpdatePass: "Failed to update password. The link may have expired or is invalid.",
+    continueWith: "Or continue with",
+    continueWithGoogle: "Continue with Google",
+    continueWithGitHub: "Continue with GitHub",
+    continueWithDiscord: "Continue with Discord",
+    continueWithTelegram: "Continue with Telegram",
 
     // General
     loading: "Loading...",
@@ -80,7 +85,9 @@ export const translations = {
     contact: "Contact",
     editProfile: "Edit Profile",
     bio: "Bio / About Me",
-    profileNotFound: "Profile not found."
+    profileNotFound: "Profile not found.",
+    avatar: "Avatar",
+    uploadNewAvatar: "Upload new avatar",
   },
   km: {
     // Header
@@ -126,6 +133,11 @@ export const translations = {
     passwordUpdatedInfo: "ពាក្យសម្ងាត់របស់អ្នកត្រូវបានធ្វើបច្ចុប្បន្នភាព។ សូមចូលដោយប្រើពាក្យសម្ងាត់ថ្មីរបស់អ្នក។",
     failedToSendReset: "បរាជ័យក្នុងការផ្ញើតំណកំណត់ពាក្យសម្ងាត់ឡើងវិញ។ សូម​ព្យាយាម​ម្ដងទៀត។",
     failedToUpdatePass: "បរាជ័យក្នុងការធ្វើបច្ចុប្បន្នភាពពាក្យសម្ងាត់។ តំណអាចនឹងផុតកំណត់ ឬមិនត្រឹមត្រូវ។",
+    continueWith: "ឬបន្តជាមួយ",
+    continueWithGoogle: "បន្តជាមួយ Google",
+    continueWithGitHub: "បន្តជាមួយ GitHub",
+    continueWithDiscord: "បន្តជាមួយ Discord",
+    continueWithTelegram: "បន្តជាមួយ Telegram",
 
     // General
     loading: "កំពុងដំណើរការ...",
@@ -162,7 +174,9 @@ export const translations = {
     contact: "ទំនាក់ទំនង",
     editProfile: "កែសម្រួលប្រវត្តិរូប",
     bio: "អំពីខ្ញុំ",
-    profileNotFound: "រកមិនឃើញប្រវត្តិរូបទេ។"
+    profileNotFound: "រកមិនឃើញប្រវត្តិរូបទេ។",
+    avatar: "រូបតំណាង",
+    uploadNewAvatar: "ផ្ទុករូបតំណាងថ្មីឡើង",
   }
 };
 

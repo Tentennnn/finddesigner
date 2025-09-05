@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../services/supabase';
@@ -9,6 +10,7 @@ interface AuthContextType {
   user: AppUser | null;
   loading: boolean;
   logout: () => Promise<void>;
+  refetchUser: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -43,6 +45,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return { ...user, profile: null };
     }
   }, []);
+
+  const refetchUser = useCallback(async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const appUser = await fetchUserProfile(session?.user ?? null);
+    setUser(appUser);
+  }, [fetchUserProfile]);
+
 
   useEffect(() => {
     const getSession = async () => {
@@ -81,6 +90,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     user,
     loading,
     logout,
+    refetchUser,
   };
 
   return (

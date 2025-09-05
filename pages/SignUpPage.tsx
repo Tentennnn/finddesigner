@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import { useLanguage } from '../hooks/useLanguage';
@@ -17,6 +17,20 @@ const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   
+  useEffect(() => {
+    if (user) {
+      let dashboardPath = '/';
+      if (user.profile?.role === UserRole.Client) {
+        dashboardPath = '/dashboard/client';
+      } else if (user.profile?.role === UserRole.Designer) {
+        dashboardPath = '/dashboard/designer';
+      } else if (user.profile?.role === UserRole.Admin) {
+        dashboardPath = '/dashboard/admin';
+      }
+      navigate(dashboardPath);
+    }
+  }, [user, navigate]);
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -49,9 +63,7 @@ const SignUpPage: React.FC = () => {
   };
 
   if (user) {
-    const dashboardPath = user.profile?.role === UserRole.Client ? '/dashboard/client' : '/dashboard/designer';
-    navigate(dashboardPath);
-    return null;
+    return null; // Prevent rendering the signup form while redirecting
   }
 
   return (

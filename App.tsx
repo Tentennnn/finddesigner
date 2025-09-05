@@ -18,6 +18,7 @@ import PostJobPage from './pages/PostJobPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import UpdatePasswordPage from './pages/UpdatePasswordPage';
 import { Toaster } from 'react-hot-toast';
+import EditProfilePage from './pages/EditProfilePage';
 
 const App: React.FC = () => {
   return (
@@ -39,6 +40,7 @@ const App: React.FC = () => {
                 <Route path="/dashboard/designer" element={<DesignerDashboardPage />} />
                 <Route path="/dashboard/admin" element={<AdminDashboardPage />} />
                 <Route path="/profile/:userId" element={<ProfilePage />} />
+                <Route path="/profile/edit" element={<EditProfilePage />} />
                 <Route path="/post-job" element={<PostJobPage />} />
                 <Route path="*" element={<Navigate to="/" />} />
               </Routes>
